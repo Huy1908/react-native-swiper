@@ -22,7 +22,7 @@ import {
 const styles = {
   container: {
     backgroundColor: 'transparent',
-    position: 'relative',
+    // position: 'relative',
     flex: 1
   },
 
@@ -41,7 +41,7 @@ const styles = {
 
   pagination_x: {
     position: 'absolute',
-    bottom: 25,
+    bottom: Platform.OS == 'ios' ? 170 : 150,
     left: 0,
     right: 0,
     flexDirection: 'row',
@@ -76,21 +76,22 @@ const styles = {
   },
 
   buttonWrapper: {
-    backgroundColor: 'transparent',
+    // backgroundColor: 'red',
     flexDirection: 'row',
     position: 'absolute',
-    top: 0,
-    left: 0,
-    flex: 1,
-    paddingHorizontal: 10,
+    // top: 0,
+    // left: 0,
+    top: 10,
+    // flex: 1,
+    paddingHorizontal: 20,
     paddingVertical: 10,
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    justifyContent: 'space-between'
   },
 
   buttonText: {
-    fontSize: 50,
-    color: '#007aff'
+    fontSize: 16,
+    color: '#007aff',
+    fontWeight: 'bold'
   }
 }
 
@@ -146,7 +147,8 @@ export default class extends Component {
     /**
      * Called when the index has changed because the user swiped.
      */
-    onIndexChanged: PropTypes.func
+    onIndexChanged: PropTypes.func,
+    login: PropTypes.func
   }
 
   /**
@@ -174,7 +176,8 @@ export default class extends Component {
     autoplayTimeout: 2.5,
     autoplayDirection: true,
     index: 0,
-    onIndexChanged: () => null
+    onIndexChanged: () => null,
+    login: () => null
   }
 
   /**
@@ -284,7 +287,7 @@ export default class extends Component {
     }
 
     initState.offset[initState.dir] =
-      initState.dir === 'y' ? initState.height * props.index : initState.width * props.index
+      initState.dir === 'y' ? height * props.index : width * props.index
 
     this.internals = {
       ...this.internals,
@@ -641,9 +644,7 @@ export default class extends Component {
             height: 8,
             borderRadius: 4,
             marginLeft: 3,
-            marginRight: 3,
-            marginTop: 3,
-            marginBottom: 3
+            marginRight: 3
           },
           this.props.activeDotStyle
         ]}
@@ -658,9 +659,7 @@ export default class extends Component {
             height: 8,
             borderRadius: 4,
             marginLeft: 3,
-            marginRight: 3,
-            marginTop: 3,
-            marginBottom: 3
+            marginRight: 3
           },
           this.props.dotStyle
         ]}
@@ -697,16 +696,28 @@ export default class extends Component {
     ) : null
   }
 
+  onPressNext(a) {
+    // if (this.state.index === 0 || this.state.index === 1) {
+    //   a !== null && this.scrollBy(1)
+    // } else {
+    //   this.props.login()
+    // }
+    this.state.index !== 2 ? a !== null && this.scrollBy(1) : this.props.login()
+  }
+
   renderNextButton = () => {
     let button = null
 
     if (this.props.loop || this.state.index !== this.state.total - 1) {
-      button = this.props.nextButton || <Text style={styles.buttonText}>›</Text>
+      button = this.props.nextButton || (
+        <Text style={[styles.buttonText, { color: '#FF6761' }]}>Tiếp tục</Text>
+      )
     }
 
     return (
       <TouchableOpacity
-        onPress={() => button !== null && this.scrollBy(1)}
+        style={{ width: '40%', alignItems: 'flex-end' }}
+        onPress={() => this.onPressNext(button)}
         disabled={this.props.disableNextButton}
       >
         <View>{button}</View>
@@ -714,19 +725,49 @@ export default class extends Component {
     )
   }
 
+  renderCenterButton = () => {
+    return (
+      <TouchableOpacity onPress={this.props.login}>
+        <Text
+          style={{
+            color: '#ADB4C5',
+            fontSize: 16,
+            fontWeight: 'bold',
+            alignContent: 'center'
+          }}
+        >
+          Bỏ qua
+        </Text>
+      </TouchableOpacity>
+    )
+  }
+
+  onPrev(b) {
+    this.state.index !== 0 ? b !== null && this.scrollBy(-1) : null
+  }
+
   renderPrevButton = () => {
     let button = null
 
     if (this.props.loop || this.state.index !== 0) {
-      button = this.props.prevButton || <Text style={styles.buttonText}>‹</Text>
+      button = this.props.prevButton || (
+        <Text style={[styles.buttonText, { color: '#3B3C53' }]}>Lùi lại</Text>
+      )
     }
 
     return (
       <TouchableOpacity
-        onPress={() => button !== null && this.scrollBy(-1)}
+        style={{ width: '40%' }}
+        onPress={() => this.onPrev(button)}
         disabled={this.props.disablePrevButton}
       >
-        <View>{button}</View>
+        {this.state.index !== 0 ? (
+          <View>{button}</View>
+        ) : (
+          <View>
+            <Text style={[styles.buttonText, { color: 'white' }]}>Huy19</Text>
+          </View>
+        )}
       </TouchableOpacity>
     )
   }
@@ -738,13 +779,16 @@ export default class extends Component {
         style={[
           styles.buttonWrapper,
           {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            height: 50,
             width: this.state.width,
-            height: this.state.height
-          },
-          this.props.buttonWrapperStyle
+            alignItems: 'center'
+          }
         ]}
       >
         {this.renderPrevButton()}
+        {this.renderCenterButton()}
         {this.renderNextButton()}
       </View>
     )
@@ -868,7 +912,11 @@ export default class extends Component {
             ? renderPagination(index, total, this)
             : this.renderPagination())}
         {this.renderTitle()}
-        {showsButtons && this.renderButtons()}
+        <View
+          style={{ position: 'absolute', bottom: 70 }}
+        >
+          {showsButtons && this.renderButtons()}
+        </View>
       </View>
     )
   }
