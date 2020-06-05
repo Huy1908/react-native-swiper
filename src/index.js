@@ -89,7 +89,7 @@ const styles = {
   },
 
   buttonText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#000',
   }
 }
