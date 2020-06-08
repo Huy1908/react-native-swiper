@@ -82,7 +82,7 @@ const styles = {
     bottom: 10,
     // left: 0,
     // flex: 1,
-    paddingHorizontal: 10,
+    paddingHorizontal: 25,
     paddingVertical: 10,
     justifyContent: 'space-between',
     // alignItems: 'center'
