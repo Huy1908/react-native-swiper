@@ -638,8 +638,8 @@ export default class extends Component {
       <View
         style={[
           {
-            backgroundColor: this.props.activeDotColor || '#007aff',
-            width: 8,
+            backgroundColor: this.props.activeDotColor || '#9F694B',
+            width: 25,
             height: 8,
             borderRadius: 4,
             marginLeft: 3,
